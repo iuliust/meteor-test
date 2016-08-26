@@ -1,0 +1,13 @@
+<form [formGroup]="addForm" (submit)="addParty()">
+	<label>Name</label>
+	<input type="text" formControlName="name">
+
+	<label>Description</label>
+	<input type="text" formControlName="description">
+
+	<label>Location</label>
+	<input type="text" formControlName="location">
+
+	<pre>{{addForm.controls.name.value}}</pre>
+	<button>Add</button>
+</form>

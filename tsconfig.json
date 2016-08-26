@@ -1,17 +1,42 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "isolatedModules": false,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "removeComments": false,
-    "noImplicitAny": false,
-    "sourceMap": true
-  },
-  "exclude": [
-    "node_modules"
-  ],
-  "compileOnSave": false
+	"atom": {
+		"rewriteTsconfig": true
+	},
+	"compilerOptions": {
+		"target": "es5",
+		"module": "commonjs",
+		"isolatedModules": false,
+		"moduleResolution": "classic",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"removeComments": false,
+		"noImplicitAny": false,
+		"sourceMap": true
+	},
+	"filesGlob": [
+		"**/*.ts"
+	],
+	"exclude": [
+		"node_modules"
+	],
+	"compileOnSave": false,
+	"files": [
+		"both/collections/parties.collection.ts",
+		"both/interfaces/party.interface.ts",
+		"client/app.component.ts",
+		"client/app.routes.ts",
+		"client/imports/parties/parties-form.component.ts",
+		"client/imports/parties/parties-list.component.ts",
+		"client/imports/parties/party-details.component.ts",
+		"client/main.ts",
+		"server/imports/fixtures/parties.ts",
+		"server/main.ts",
+		"typings/globals/angular2-compilers/index.d.ts",
+		"typings/globals/chai/index.d.ts",
+		"typings/globals/es6-shim/index.d.ts",
+		"typings/globals/meteor/index.d.ts",
+		"typings/globals/mocha/index.d.ts",
+		"typings/index.d.ts",
+		"typings/modules/chai-spies/index.d.ts"
+	]
 }
