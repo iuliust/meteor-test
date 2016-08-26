@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { REACTIVE_FORM_DIRECTIVES, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
+import { Meteor } from 'meteor/meteor';
+import { MeteorComponent } from 'angular2-meteor';
+import { InjectUser } from 'angular2-meteor-accounts-ui';
 
 import { Parties } from '../../../both/collections/parties.collection';
 import template from './parties-form.component.html';
@@ -8,29 +11,23 @@ import template from './parties-form.component.html';
 @Component({
 	selector: 'parties-form',
 	template,
-	directives: [REACTIVE_FORM_DIRECTIVES],
-	styles: [`
-		form {
-			border: 1px solid transparent;
-		}
-		form.ng-valid {
-			border-color: green;
-		}
-		form.ng-invalid {
-			border-color: red;
-		}
-		`]
+	directives: [REACTIVE_FORM_DIRECTIVES]
 })
-export class PartiesFormComponent implements OnInit{
+@InjectUser('user')
+export class PartiesFormComponent extends MeteorComponent implements OnInit{
 	addForm: FormGroup;
+	user: Meteor.User;
 
-	constructor(private formBuilder : FormBuilder) { }
+	constructor(private formBuilder : FormBuilder) {
+		super();
+	}
 
 	ngOnInit() {
 		this.addForm = this.formBuilder.group({
-			name: ['Bob', Validators.required],
+			name: ['', Validators.required],
 			description: [],
-			location: ['', Validators.required]
+			location: ['', Validators.required],
+			public: [false]
 		});
 	}
 
@@ -38,14 +35,18 @@ export class PartiesFormComponent implements OnInit{
 		this.addForm.controls['name']['updateValue']('');
 	    this.addForm.controls['description']['updateValue']('');
 	    this.addForm.controls['location']['updateValue']('');
+	    this.addForm.controls['public']['updateValue'](false);
 	}
 
 	addParty() {
 		if (this.addForm.valid) {
-			Parties.insert(this.addForm.value);
-
-			// XXX will be replaced by this.addForm.reset() in RC5+
-			this.resetForm();
+			if (Meteor.userId()) {
+				Parties.insert(Object.assign({}, this.addForm.value, {owner: Meteor.userId()}));
+				this.resetForm();
+				// XXX will be replaced by this.addForm.reset() in RC5+
+			} else {
+				alert('Please log in to add a party.')
+			}
 		}
 	}
 }

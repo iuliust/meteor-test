@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { ActivatedRoute, ROUTER_DIRECTIVES } from '@angular/router';
+import { ActivatedRoute, ROUTER_DIRECTIVES, CanActivate } from '@angular/router';
 
+import { MeteorComponent } from 'angular2-meteor';
 import { Tracker } from 'meteor/tracker';
 
 import { Parties } from '../../../both/collections/parties.collection';
@@ -13,11 +14,13 @@ import template from './party-details.component.html';
   template,
   directives: [ROUTER_DIRECTIVES]
 })
-export class PartyDetailsComponent implements OnInit {
+export class PartyDetailsComponent extends MeteorComponent implements OnInit, CanActivate {
 	private partyId: string;
 	private party: Party;
 
-	constructor(private activatedRoute : ActivatedRoute, private ngZone: NgZone) {}
+	constructor(private activatedRoute : ActivatedRoute, private ngZone: NgZone) {
+		super();
+	}
 
 	ngOnInit() {
 		this.activatedRoute.params
@@ -25,12 +28,23 @@ export class PartyDetailsComponent implements OnInit {
 			.subscribe(partyId => {
 				this.partyId = partyId
 				this.party = Parties.findOne(this.partyId);
-				Tracker.autorun(() => {
-					this.ngZone.run(() => {
-			            this.party = Parties.findOne(this.partyId);
-			        });
-		        });
+
+				this.subscribe('party', this.partyId, () => {
+		        	this.party = Parties.findOne(this.partyId);
+		        }, true);
+
+
+				// Tracker.autorun(() => {
+				// 	this.ngZone.run(() => {
+			    //         this.party = Parties.findOne(this.partyId);
+			    //     });
+		        // });
 			});
+	}
+
+	canActivate() {
+		const party = Parties.findOne(this.partyId);
+    	return (party && party.owner == Meteor.userId());
 	}
 
 	saveParty() {
